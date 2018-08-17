@@ -1,0 +1,49 @@
+version: '2'
+
+services:
+  icinga2:
+    image: grassharper/icinga2
+    container_name: icinga2
+    restart: on-failure:5
+    hostname: icinga2
+    environment:
+      ICINGA2_FEATURE_PGSQL: 'false'
+      ICINGA2_FEATURE_MYSQL: 'true'
+      ICINGA2_MYSQL_DB: 'icinga2'
+      ICINGA2_MYSQL_USER: 'icinga2'
+      ICINGA2_MYSQL_PASSWORD: 'icinga2'
+      ICINGA2_MYSQL_HOST: 'mariadb'
+      ICINGA2_FEATURE_ELASTICSEARCH: 'false'
+      ICINGA2_ELASTICSEARCH_HOST: 'elasticsearch'
+      ICINGA2_ELASTICSEARCH_PORT: '9200'
+      ICINGA2_ELASTICSEARCH_INDEX: "icinga2"
+      ICINGA2_ELASTICSEARCH_PERFDATA: 'true'
+      ICINGA2_ELASTICSEARCH_FLUSH_THRESHOLD: "1024"
+      ICINGA2_ELASTICSEARCH_FLUSH_INTERVAL: "10s"
+      ICINGA2_FEATURE_API: 'true'
+      ICINGA2_API_USER: 'root'
+      ICINGA2_API_PASSWORD: 'api'
+      ICINGA2_FEATURE_COMMAND: 'true'
+      ICINGA2_FEATURE_CHECKER: 'true'
+      ICINGA2_FEATURE_LIVESTATUS: 'true'
+      ICINGA2_FEATURE_STATUSDATA: 'true'
+    networks:
+     - default
+    depends_on:
+      - mariadb
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    restart: on-failure:5
+    hostname: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: 'mypass'
+      MYSQL_DATABASE: 'icinga2'
+      MYSQL_USER: 'icinga2'
+      MYSQL_PASSWORD: 'icinga2'
+    networks:
+     - default
+
+networks:
+  default:
+    driver: bridge
